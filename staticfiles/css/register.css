@@ -1,0 +1,115 @@
+/* core/static/css/register.css */
+.register-container {
+    min-height: 100vh;
+    padding: 2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                url('../img/medical-background.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.register-card {
+    width: 100%;
+    max-width: 1000px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+
+.register-header {
+    background: linear-gradient(45deg, #4e73df, #224abe);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    border-radius: 15px 15px 0 0;
+}
+
+.register-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.form-control {
+    height: 40px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-col {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Estilos para los selects */
+.speciality-select {
+    width: 100%;
+    height: 40px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    padding: 0 0.75rem;
+    background-color: white;
+    cursor: pointer;
+}
+
+/* Estilos para los requisitos de contraseña */
+.password-requirements {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.25rem;
+    padding: 0.5rem;
+    background-color: #f8f9fc;
+    border-radius: 4px;
+}
+
+.password-requirements ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+/* Botón de registro */
+.register-btn {
+    width: auto;
+    padding: 0.5rem 2rem;
+    background: #4e73df;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+    background: #224abe;
+    transform: translateY(-1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .register-card {
+        margin: 1rem;
+    }
+    
+    .form-col {
+        flex: 100%;
+    }
+}

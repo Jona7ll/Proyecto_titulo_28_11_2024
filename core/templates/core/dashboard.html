@@ -1,0 +1,199 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Primera fila: Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-citas-hoy">
+                <div class="stat-title">Citas Hoy</div>
+                <div class="stat-number">{{ citas_hoy }}</div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-en-espera">
+                <div class="stat-title">En Espera</div>
+                <div class="stat-number">{{ pacientes_espera }}</div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-atendidos">
+                <div class="stat-title">Atendidos</div>
+                <div class="stat-number">{{ atendidos }}</div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stat-card card-total-pacientes">
+                <div class="stat-title">Total Pacientes</div>
+                <div class="stat-number">{{ total_pacientes }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Segunda fila: Gráfico y Próximas Citas -->
+    <div class="row">
+        <!-- Gráfico de Citas -->
+        <div class="col-xl-8 col-lg-7 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="text-white">Citas por Día</h6>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="citasChart" data-fechas='{{ fechas|safe }}' data-citas='{{ citas_por_dia|safe }}'></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Próximas Citas -->
+        <div class="col-xl-4 col-lg-5 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header">
+                    <h6 class="text-white">Próximas Citas</h6>
+                </div>
+                <div class="card-body">
+                    {% if proximas_citas %}
+                        <div class="upcoming-list">
+                            {% for cita in proximas_citas %}
+                                <div class="upcoming-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="time">{{ cita.fecha_hora|time:"H:i" }}</div>
+                                            <div class="fw-bold">{{ cita.paciente.nombre }} {{ cita.paciente.apellido }}</div>
+                                            <div class="text-muted small">{{ cita.paciente.diagnostico.nombre }}</div>
+                                        </div>
+                                        <div class="priority-badge {% if cita.paciente.prioridad >= 0.8 %}high{% elif cita.paciente.prioridad >= 0.5 %}medium{% else %}low{% endif %}">
+                                            {{ cita.paciente.prioridad|floatformat:2 }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center p-4">
+                            <p class="text-muted mb-0">No hay citas próximas</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('citasChart').getContext('2d');
+    const fechas = JSON.parse(document.getElementById('citasChart').dataset.fechas);
+    const citas = JSON.parse(document.getElementById('citasChart').dataset.citas);
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: fechas,
+            datasets: [{
+                label: 'Citas',
+                data: citas,
+                borderColor: '#4361EE',
+                backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.stat-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+    height: 100%;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+.card-citas-hoy { background-color: #4361EE; }
+.card-en-espera { background-color: #FFC107; }
+.card-atendidos { background-color: #2BC155; }
+.card-total-pacientes { background-color: #36B9CC; }
+
+.stat-title {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.card {
+    border-radius: 12px;
+    border: none;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 1rem 1.5rem;
+}
+
+.upcoming-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.upcoming-item {
+    padding: 1rem;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.upcoming-item:last-child {
+    border-bottom: none;
+}
+
+.priority-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    color: white;
+}
+
+.priority-badge.high { background-color: #e74a3b; }
+.priority-badge.medium { background-color: #f6c23e; }
+.priority-badge.low { background-color: #1cc88a; }
+
+.time {
+    color: #4361EE;
+    font-weight: 600;
+}
+</style>
+{% endblock %}
